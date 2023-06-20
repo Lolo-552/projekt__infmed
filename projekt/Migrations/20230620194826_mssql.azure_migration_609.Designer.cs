@@ -9,11 +9,11 @@ using projekt.Data;
 
 #nullable disable
 
-namespace projekt.Data.Migrations
+namespace projekt.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230620192538_init-azure")]
-    partial class initazure
+    [Migration("20230620194826_mssql.azure_migration_609")]
+    partial class mssqlazure_migration_609
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

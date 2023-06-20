@@ -2,9 +2,9 @@
 
 #nullable disable
 
-namespace projekt.Data.Migrations
+namespace projekt.Migrations
 {
-    public partial class INITTT : Migration
+    public partial class init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

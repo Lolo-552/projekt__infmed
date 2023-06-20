@@ -9,11 +9,11 @@ using projekt.Data;
 
 #nullable disable
 
-namespace projekt.Data.Migrations
+namespace projekt.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230620151718_INITTTT")]
-    partial class INITTTT
+    [Migration("20230620194946_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
