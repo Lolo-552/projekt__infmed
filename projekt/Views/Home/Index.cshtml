@@ -1,0 +1,90 @@
+﻿<div class="text-center">
+    <div id="compressionForm" style="margin-top: 60px;">
+        <h2>Wybierz plik do kompresji</h2>
+        <div class="input-group mb-3">
+            <input type="file" class="form-control" id="inputGroupFile01" />
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01">Wybierz rodzaj kompresji</label>
+            <select class="form-select" id="inputGroupSelect01">
+                <option selected>Nie wybrano metody kompresji</option>
+                <option value="gzip">GZIP</option>
+                <option value="deflate">DEFLATE</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <input type="submit" value="Kompresuj" class="btn btn-primary" onclick="compressFile()" />
+            <input type="submit" value="Dekompresuj" class="btn btn-primary" onclick="decompressFile()" id="decompressionButton" disabled />
+        </div>
+    </div>
+    <div id="downloadSection"></div>
+</div>
+
+<script>
+    document.getElementById('decompressionButton').disabled = false;
+    function compressFile() {
+        const fileInput = document.getElementById('inputGroupFile01');
+        const compressionType = document.getElementById('inputGroupSelect01').value;
+        const file = fileInput.files[0];
+
+        const fileReader = new FileReader();
+        fileReader.onload = function (event) {
+            const fileData = event.target.result;
+            let compressedData;
+
+            if (compressionType === 'gzip') {
+                compressedData = pako.gzip(fileData);
+                compressionMethod = 'GZIP';
+            } else if (compressionType === 'deflate') {
+                compressedData = pako.deflate(fileData);
+                compressionMethod = 'DEFLATE';
+            }
+
+            const originalSize = file.size;
+            const compressedSize = compressedData.length;
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(new Blob([compressedData]));
+            downloadLink.download = 'compressed_' + compressionMethod.toLowerCase() + '_' + file.name;
+            downloadLink.textContent = 'Pobierz skompresowany plik';
+
+            const downloadSection = document.getElementById('downloadSection');
+            downloadSection.innerHTML = `
+                            <p>Wielkość pliku przed kompresją: ${originalSize} bajtów</p>
+                            <p>Wielkość pliku po kompresji (${compressionMethod}): ${compressedSize} bajtów</p>
+                        `;
+            downloadSection.appendChild(downloadLink);
+        };
+
+        fileReader.readAsArrayBuffer(file);
+    }
+
+    function decompressFile() {
+        const fileInput = document.getElementById('inputGroupFile01');
+        const file = fileInput.files[0];
+
+        const fileReader = new FileReader();
+        fileReader.onload = function (event) {
+            const compressedData = new Uint8Array(event.target.result);
+            let decompressedData;
+
+            try {
+                decompressedData = pako.inflate(compressedData);
+            } catch (error) {
+                console.error('Błąd dekompresji pliku:', error)
+                return;
+            }
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = URL.createObjectURL(new Blob([decompressedData]));
+            downloadLink.download = 'decompressed_' + file.name;
+            downloadLink.textContent = 'Pobierz zdekompresowany plik';
+
+            const downloadSection = document.getElementById('downloadSection');
+            downloadSection.innerHTML = '';
+            downloadSection.appendChild(downloadLink);
+        };
+
+        fileReader.readAsArrayBuffer(file);
+    }
+</script>
